@@ -13,28 +13,26 @@ package com.github.minemanmods.MinemanUtilities.enums;
  * */
 public interface PseudoEnum {
 
-    String getSlug();
-
-//    private static final List<PseudoEnum> values = new ArrayList<PseudoEnum>();
+//    private static final List<EnumType> values = new ArrayList<EnumType>();
 //
 //    // START OF ENUM ENTRIES
 //
-//    public static final PseudoEnum EXAMPLE = setValue(null);
+//    public static final EnumType EXAMPLE = registerValue(null);
 //
 //    // END OF ENUM ENTRIES
 //
-//    private static PseudoEnum setValue(PseudoEnum modifier) {
+//    public static EnumType registerValue(EnumType modifier) {
 //        values.add(modifier);
 //        return modifier;
 //    }
 //
-//    public static PseudoEnum[] values() {
-//        return values.toArray(new PseudoEnum[0]);
+//    public static EnumType[] values() {
+//        return values.toArray(new EnumType[0]);
 //    }
 //
-//    public static PseudoEnum getValue(String slug) {
+//    public static EnumType getValue(String slug) {
 //        if (slug != null && !slug.isEmpty()) {
-//            for (PseudoEnum value : values) {
+//            for (EnumType value : values) {
 //                if (Objects.equals(slug, value.getSlug())) {
 //                    return value;
 //                }

@@ -77,16 +77,7 @@ public class InventoryAPI {
         if (!isValidInventory(inventory)) {
             return false;
         }
-        if (item == null) {
-            return false;
-        }
-        if (item.getTypeId() < 1) {
-            return false;
-        }
-        if (item.getDurability() < 0) {
-            return false;
-        }
-        if (amount < 1) {
+        if (!ItemAPI.isValidItem(item)) {
             return false;
         }
         int count = 0;
@@ -170,10 +161,10 @@ public class InventoryAPI {
      * */
     public static void addItemToInventory(final Inventory inventory, final ItemStack item) throws FailedTransactionException {
         if (!isValidInventory(inventory)) {
-            throw new NullPointerException("Cannot remove item from an invalid inventory.");
+            throw new NullPointerException("Cannot add item from an invalid inventory.");
         }
         if (!ItemAPI.isValidItem(item)) {
-            throw new NullPointerException("Cannot remove an invalid item from an inventory.");
+            throw new NullPointerException("Cannot add an invalid item from an inventory.");
         }
         ItemStack[] savedInventory = duplicateInventory(inventory.getContents());
         Map<Integer, ItemStack> remaining = inventory.addItem(item);
@@ -191,8 +182,8 @@ public class InventoryAPI {
      * Items in item1 will be moved from inventory1 to inventory2.
      * Items in item2 will be moved from inventory2 to inventory1.
      * Throws if either inventory is invalid.
-     * Throws if either items array is null.
-     * Invalid items are ignored.
+     * Throws if either item arrays are null.
+     * Throws if either item arrays contain invalid items.
      * */
     public static void inventoryTransaction(final Inventory inventory1, final ItemStack[] items1, final Inventory inventory2, final ItemStack[] items2) throws NullPointerException, FailedTransactionException {
         if (!isValidInventory(inventory1)) {

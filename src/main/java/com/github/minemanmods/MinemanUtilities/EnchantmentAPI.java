@@ -4,6 +4,9 @@ import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class EnchantmentAPI {
 
     /**
@@ -22,6 +25,14 @@ public class EnchantmentAPI {
      * */
     public static boolean isSafeEnchantment(final Enchantment enchantment, final int level) {
         return isValidEnchantment(enchantment) && level >= enchantment.getStartLevel() && level <= enchantment.getMaxLevel();
+    }
+
+    /**
+     * Gets the slug of an enchantment.
+     * Returns null if the enchantment is null.
+     * */
+    public static String getEnchantmentSlug(final Enchantment enchantment) {
+        return enchantment == null ? null : enchantment.getName();
     }
 
     /**
@@ -124,6 +135,20 @@ public class EnchantmentAPI {
     }
 
     /**
+     * Gets the enchantments on an item.
+     * Returns an empty array if the item has no meta.
+     * */
+    public static Map<Enchantment, Integer> getEnchantments(final ItemStack item) {
+        if (item != null && item.hasItemMeta()) {
+            ItemMeta meta = item.getItemMeta();
+            if (meta.hasEnchants()) {
+                return meta.getEnchants();
+            }
+        }
+        return new HashMap<>();
+    }
+
+    /**
      * Adds a single enchantment (unsafely) to an item.
      * Does nothing if the item is null.
      * Does nothing if the enchantment is null.
@@ -132,8 +157,8 @@ public class EnchantmentAPI {
      * Does nothing if adding the enchantment failed.
      * */
     public static boolean addEnchantment(final ItemStack item, final Enchantment enchantment, final int level) {
-        if (item != null && enchantment != null && level > 0 && item.hasItemMeta()) {
-            ItemMeta meta = item.getItemMeta();
+        ItemMeta meta = ItemAPI.getItemMeta(item);
+        if (item != null && enchantment != null && level > 0 && meta != null) {
             if (!meta.addEnchant(enchantment, level, true)) {
                 return false;
             }

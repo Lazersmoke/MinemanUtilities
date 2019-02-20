@@ -1,6 +1,5 @@
 package com.github.minemanmods.MinemanUtilities;
 
-import com.google.common.base.Strings;
 import org.bukkit.Color;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -28,11 +27,11 @@ public class PotionAPI {
         if (item.getType().getId() != Material.POTION.getId()) {
             return false;
         }
-        ItemMeta itemMeta = item.getItemMeta();
-        if (itemMeta == null) {
+        ItemMeta meta = item.getItemMeta();
+        if (meta == null) {
             return false;
         }
-        if (!(itemMeta instanceof PotionMeta)) {
+        if (!(meta instanceof PotionMeta)) {
             return false;
         }
         return true;
@@ -66,7 +65,7 @@ public class PotionAPI {
      * Returns null if no match is found.
      * */
     public static PotionType getPotionType(String slug) {
-        if (Strings.isNullOrEmpty(slug)) {
+        if (slug == null || slug.isEmpty()) {
             return null;
         }
         for (PotionType type : PotionType.values()) {
@@ -164,6 +163,18 @@ public class PotionAPI {
     }
 
     /**
+     * Gets the custom potion effects from an item.
+     * Returns an empty array if the item is not a valid potion.
+     * */
+    public static PotionEffect[] getCustomEffects(final ItemStack item) {
+        PotionMeta meta = getPotionMeta(item);
+        if (meta != null && meta.hasCustomEffects()) {
+            return meta.getCustomEffects().toArray(new PotionEffect[0]);
+        }
+        return new PotionEffect[0];
+    }
+
+    /**
      * Adds a custom effect to a potion, overiding if necessary.
      * Returns false if the item is not a valid potion.
      * Returns false if the effect is null.
@@ -188,7 +199,7 @@ public class PotionAPI {
     public static boolean removeCustomEffect(final ItemStack item, final PotionEffectType type) {
         if (type != null) {
             PotionMeta meta = getPotionMeta(item);
-            if (meta != null) {
+            if (meta != null && meta.hasCustomEffects()) {
                 return meta.removeCustomEffect(type);
             }
         }
@@ -202,7 +213,7 @@ public class PotionAPI {
      * */
     public static boolean clearCustomEffects(final ItemStack item) {
         PotionMeta meta = getPotionMeta(item);
-        if (meta != null) {
+        if (meta != null && meta.hasCustomEffects()) {
             return meta.clearCustomEffects();
         }
         return false;

@@ -36,6 +36,14 @@ public class MaterialAPI {
     }
 
     /**
+     * Determines whether two materials match.
+     * Returns false if either material is null.
+     * */
+    public static boolean isSameMaterial(final Material material1, final Material material2) {
+        return material1 != null && material1.equals(material2);
+    }
+
+    /**
      * Returns a Material from a stringified SLUG, such as: AIR, STONE, or DOUBLE_STEP
      * Returns Air if the material cannot be found.
      * */

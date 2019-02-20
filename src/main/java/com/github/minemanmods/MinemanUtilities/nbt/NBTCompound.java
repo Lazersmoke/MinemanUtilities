@@ -1,29 +1,20 @@
 package com.github.minemanmods.MinemanUtilities.nbt;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.logging.Logger;
-
+import com.github.minemanmods.MinemanUtilities.Validate;
 import net.minecraft.server.v1_12_R1.NBTBase;
-import net.minecraft.server.v1_12_R1.NBTTagByte;
-import net.minecraft.server.v1_12_R1.NBTTagByteArray;
 import net.minecraft.server.v1_12_R1.NBTTagCompound;
 import net.minecraft.server.v1_12_R1.NBTTagDouble;
 import net.minecraft.server.v1_12_R1.NBTTagFloat;
-import net.minecraft.server.v1_12_R1.NBTTagInt;
-import net.minecraft.server.v1_12_R1.NBTTagIntArray;
 import net.minecraft.server.v1_12_R1.NBTTagList;
 import net.minecraft.server.v1_12_R1.NBTTagLong;
 import net.minecraft.server.v1_12_R1.NBTTagShort;
 import net.minecraft.server.v1_12_R1.NBTTagString;
-import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_12_R1.inventory.CraftItemStack;
 import org.bukkit.inventory.ItemStack;
 
-public class NBTCompound {
+import javax.validation.constraints.NotNull;
 
-    private static final Logger log = Bukkit.getLogger();
+public class NBTCompound {
 
     private NBTTagCompound tag;
 
@@ -31,11 +22,11 @@ public class NBTCompound {
         this.tag = new NBTTagCompound();
     }
 
-    public NBTCompound(ItemStack item) {
+    public NBTCompound(@NotNull ItemStack item) {
         this(CraftItemStack.asNMSCopy(item).getTag());
     }
 
-    public NBTCompound(NBTTagCompound tag) {
+    public NBTCompound(@NotNull NBTTagCompound tag) {
         this.tag = tag == null ? new NBTTagCompound() : tag;
     }
 
@@ -53,7 +44,9 @@ public class NBTCompound {
      * Sets a boolean value to a key.
      * */
     public void setBoolean(String key, boolean value) {
-        this.tag.setBoolean(key, value);
+        if (Validate.isValid(key)) {
+            this.tag.setBoolean(key, value);
+        }
     }
 
     /**
@@ -74,7 +67,7 @@ public class NBTCompound {
      * Sets a boolean array to a key.
      * */
     public void setBooleanArray(String key, boolean[] values) {
-        if (values != null) {
+        if (Validate.isValid(key) && Validate.isValid(values)) {
             byte[] cache = new byte[values.length];
             for (int i = 0; i < values.length; i++) {
                 cache[i] = (byte) (values[i] ? 0x1 : 0x0);
@@ -96,7 +89,9 @@ public class NBTCompound {
      * Sets a byte to a key.
      * */
     public void setByte(String key, byte value) {
-        this.tag.setByte(key, value);
+        if (Validate.isValid(key)) {
+            this.tag.setByte(key, value);
+        }
     }
 
     /**
@@ -112,7 +107,9 @@ public class NBTCompound {
      * Sets a byte array to a key.
      * */
     public void setByteArray(String key, byte[] values) {
-        this.tag.setByteArray(key, values);
+        if (Validate.isValid(key) && Validate.isValid(values)) {
+            this.tag.setByteArray(key, values);
+        }
     }
 
     /**
@@ -128,7 +125,9 @@ public class NBTCompound {
      * Sets a short to a key.
      * */
     public void setShort(String key, short value) {
-        this.tag.setShort(key, value);
+        if (Validate.isValid(key)) {
+            this.tag.setShort(key, value);
+        }
     }
 
     /**
@@ -158,7 +157,7 @@ public class NBTCompound {
      * Sets a short array to a key.
      * */
     public void setShortArray(String key, short[] values) {
-        if (values != null) {
+        if (Validate.isValid(key) && Validate.isValid(values)) {
             NBTTagList list = new NBTTagList();
             for (short value : values) {
                 list.add(new NBTTagShort(value));
@@ -180,7 +179,9 @@ public class NBTCompound {
      * Sets an int to a key.
      * */
     public void setInt(String key, int value) {
-        this.tag.setInt(key, value);
+        if (Validate.isValid(key)) {
+            this.tag.setInt(key, value);
+        }
     }
 
     /**
@@ -196,7 +197,9 @@ public class NBTCompound {
      * Sets an int array to a key.
      * */
     public void setIntArray(String key, int[] values) {
-        this.tag.setIntArray(key, values);
+        if (Validate.isValid(key) && Validate.isValid(values)) {
+            this.tag.setIntArray(key, values);
+        }
     }
 
     /**
@@ -212,7 +215,9 @@ public class NBTCompound {
      * Sets a long to a key.
      * */
     public void setLong(String key, long value) {
-        this.tag.setLong(key, value);
+        if (Validate.isValid(key)) {
+            this.tag.setLong(key, value);
+        }
     }
 
     /**
@@ -242,7 +247,7 @@ public class NBTCompound {
      * Sets a long array to a key.
      * */
     public void setLongArray(String key, long[] values) {
-        if (values != null) {
+        if (Validate.isValid(key) && Validate.isValid(values)) {
             NBTTagList list = new NBTTagList();
             for (long value : values) {
                 list.add(new NBTTagLong(value));
@@ -264,7 +269,9 @@ public class NBTCompound {
      * Sets a float to a key.
      * */
     public void setFloat(String key, float value) {
-        this.tag.setFloat(key, value);
+        if (Validate.isValid(key)) {
+            this.tag.setFloat(key, value);
+        }
     }
 
     /**
@@ -294,7 +301,7 @@ public class NBTCompound {
      * Sets a float array to a key.
      * */
     public void setFloatArray(String key, float[] values) {
-        if (values != null) {
+        if (Validate.isValid(key) && Validate.isValid(values)) {
             NBTTagList list = new NBTTagList();
             for (float value : values) {
                 list.add(new NBTTagFloat(value));
@@ -316,7 +323,9 @@ public class NBTCompound {
      * Sets a double to a key.
      * */
     public void setDouble(String key, double value) {
-        this.tag.setDouble(key, value);
+        if (Validate.isValid(key)) {
+            this.tag.setDouble(key, value);
+        }
     }
 
     /**
@@ -346,7 +355,7 @@ public class NBTCompound {
      * Sets a double array to a key.
      * */
     public void setDoubleArray(String key, double[] values) {
-        if (values != null) {
+        if (Validate.isValid(key) && Validate.isValid(values)) {
             NBTTagList list = new NBTTagList();
             for (double value : values) {
                 list.add(new NBTTagDouble(value));
@@ -368,7 +377,9 @@ public class NBTCompound {
      * Sets a String value to a key.
      * */
     public void setString(String key, String value) {
-        this.tag.setString(key, value);
+        if (Validate.isValid(key) && Validate.isValid(value)) {
+            this.tag.setString(key, value);
+        }
     }
 
     /**
@@ -398,7 +409,7 @@ public class NBTCompound {
      * Sets a String array to a key.
      * */
     public void setStringArray(String key, String[] values) {
-        if (values != null) {
+        if (Validate.isValid(key) && Validate.isValid(values)) {
             NBTTagList list = new NBTTagList();
             for (String value : values) {
                 list.add(new NBTTagString(value));
@@ -418,7 +429,7 @@ public class NBTCompound {
      * Sets an NBT Compound to a key.
      * */
     public void setCompound(String key, NBTCompound value) {
-        if (value != null) {
+        if (Validate.isValid(key) && value != null) {
             this.tag.set(key, value.tag);
         }
     }
@@ -450,7 +461,7 @@ public class NBTCompound {
      * Sets an NBT Compound array to a key.
      * */
     public void setCompoundArray(String key, NBTCompound[] values) {
-        if (values != null) {
+        if (Validate.isValid(key) && Validate.isValid(values)) {
             NBTTagList list = new NBTTagList();
             for (NBTCompound value : values) {
                 list.add(value.tag);

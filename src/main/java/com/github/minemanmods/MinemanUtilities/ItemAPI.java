@@ -1,6 +1,5 @@
 package com.github.minemanmods.MinemanUtilities;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -153,6 +152,15 @@ public class ItemAPI {
     }
 
     /**
+     * Gets the meta data of an item.
+     * Returns null if the item is null.
+     * Returns null if the meta is null.
+     * */
+    public static ItemMeta getItemMeta(final ItemStack item) {
+        return item == null ? null : item.getItemMeta();
+    }
+
+    /**
      * Gets the display name of an item.
      * Returns null if the item is null.
      * Returns null if the item has no meta.
@@ -161,7 +169,7 @@ public class ItemAPI {
     public static String getName(final ItemStack item) {
         if (item != null && item.hasItemMeta()) {
             ItemMeta meta = item.getItemMeta();
-            if (meta.hasDisplayName()) {
+            if (meta != null && meta.hasDisplayName()) {
                 return meta.getDisplayName();
             }
         }
@@ -176,8 +184,10 @@ public class ItemAPI {
      * @return True if the setting was successful.
      * */
     public static boolean setName(final ItemStack item, final String name) {
-        if (item != null && item.hasItemMeta() && !Strings.isNullOrEmpty(name)) {
-            item.getItemMeta().setDisplayName(name);
+        if (name != null && !name.isEmpty()) {
+            ItemMeta meta = getItemMeta(item);
+            meta.setDisplayName(name);
+            item.setItemMeta(meta);
             return true;
         }
         return false;
@@ -191,9 +201,9 @@ public class ItemAPI {
      * */
     public static List<String> getLore(final ItemStack item) {
         if (item != null && item.hasItemMeta()) {
-            List<String> lore = item.getItemMeta().getLore();
-            if (lore != null) {
-                return lore;
+            ItemMeta meta = item.getItemMeta();
+            if (meta != null && meta.hasLore()) {
+                return meta.getLore();
             }
         }
         return new ArrayList<>();
@@ -217,26 +227,23 @@ public class ItemAPI {
      * @return True if the setting was successful.
      * */
     public static boolean addLore(final ItemStack item, final boolean prepend, final String... lore) {
-        if (item != null && lore != null && item.hasItemMeta()) {
-            ItemMeta meta = item.getItemMeta();
-            List<String> currentLore = meta.getLore();
-            if (currentLore == null) {
-                meta.setLore(Arrays.asList(lore));
-                item.setItemMeta(meta);
-                return true;
+        ItemMeta meta = getItemMeta(item);
+        if (Validate.isValid(lore) && meta != null) {
+            List<String> current = meta.getLore();
+            if (current == null) {
+                current = new ArrayList<>();
+            }
+            if (prepend) {
+                for (String line : Lists.reverse(Arrays.asList(lore))) {
+                    current.add(0, line);
+                }
             }
             else {
-                if (prepend) {
-                    for (String line : Lists.reverse(Arrays.asList(lore))) {
-                        currentLore.add(0, line);
-                    }
-                    return true;
-                }
-                else {
-                    currentLore.addAll(Arrays.asList(lore));
-                    return true;
-                }
+                current.addAll(Arrays.asList(lore));
             }
+            meta.setLore(current);
+            item.setItemMeta(meta);
+            return true;
         }
         return false;
     }
@@ -249,8 +256,8 @@ public class ItemAPI {
      * @return True if the setting was successful.
      * */
     public static boolean setLore(final ItemStack item, final String... lore) {
-        if (item != null && lore != null && item.hasItemMeta()) {
-            ItemMeta meta = item.getItemMeta();
+        ItemMeta meta = getItemMeta(item);
+        if (Validate.isValid(lore) && meta != null) {
             meta.setLore(Arrays.asList(lore));
             item.setItemMeta(meta);
             return true;
