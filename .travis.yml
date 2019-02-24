@@ -14,6 +14,7 @@ cache:
 
 # Only re-download spigot if we don't have spigot in the repo
 before_install:
+  - chmod +x installSpigot.sh
   - if [ ! -d "$HOME/.m2/repository/org/spigotmc" ]; then ./installSpigot.sh 1.12 ; else echo "Not compiling Spigot because it is already in our maven" ; fi
 
 # Set the final name using pom-fu
