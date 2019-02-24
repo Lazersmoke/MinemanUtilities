@@ -6,7 +6,7 @@
 
     <groupId>com.github.minemanmods</groupId>
     <artifactId>MinemanUtilities</artifactId>
-    <version>0.0.9</version>
+    <version>0.0.10</version>
 
     <name>Mineman Utilities</name>
     <description>Some utilities for Minecraft.</description>
@@ -26,10 +26,12 @@
     </issueManagement>
 
     <properties>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <build>
+        <finalName>${finalName}</finalName>
         <resources>
             <resource>
                 <directory>${basedir}</directory>
