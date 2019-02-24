@@ -3,16 +3,62 @@ package com.github.minemanmods.MinemanUtilities;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Objects;
+
 public class MaterialAPI {
 
     /**
-     * Determines whether an item stack is a valid item.
+     * Determines whether a material is valid.
+     * Returns false if the material is null.
+     * Returns false if the material id is impossible.
+     * */
+    public static boolean isValidMaterial(final Material material) {
+        return material != null && !Objects.equals(material, Material.AIR);
+    }
+
+    /**
+     * Determines whether a material description is valid.
      * Returns false if the item id is impossible.
      * Returns false if the item durability is impossible.
      * */
-    @SuppressWarnings("deprecation")
     public static boolean isValidMaterial(final Material material, final short durability) {
-        return material.getId() > 0 && durability >= 0;
+        return isValidMaterial(material) && durability >= 0;
+    }
+
+    /**
+     * Determines whether two materials match.
+     * Returns false if either material is null.
+     * Returns false if the materials do not match.
+     * */
+    public static boolean isSameMaterial(final Material lhs, final Material rhs) {
+        if (lhs == null || rhs == null) {
+            return false;
+        }
+        if (lhs == rhs) {
+            return true;
+        }
+        if (!Objects.equals(lhs, rhs)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Determines whether two material descriptions match.
+     * Returns false if either material is null.
+     * Returns false if the materials do not match.
+     * Returns false if the durabilities do not match.
+     * * This will not check if the material uses the durability as a differentiator,
+     * * only call this function if you want to match a material with its durability.
+     * */
+    public static boolean isSameMaterial(final Material material1, final short durability1, final Material material2, final short durability2) {
+        if (!isSameMaterial(material1, material2)) {
+            return false;
+        }
+        if (durability1 != durability2) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -21,26 +67,14 @@ public class MaterialAPI {
      * Returns false if the item ids do not match.
      * Returns false if the item durabilities do not match.
      * */
-    @SuppressWarnings("deprecation")
-    public static boolean isSameMaterial(final ItemStack item1, final ItemStack item2) {
-        return item1 != null && item2 != null && isSameMaterial(item1.getTypeId(), item1.getDurability(), item2.getTypeId(), item2.getDurability());
-    }
-
-    /**
-     * Determines whether two items have the same material.
-     * Returns false if the item ids do not match.
-     * Returns false if the item durabilities do not match.
-     * */
-    public static boolean isSameMaterial(final int id1, final short durability1, final int id2, final short durability2) {
-        return id1 == id2 && durability1 == durability2;
-    }
-
-    /**
-     * Determines whether two materials match.
-     * Returns false if either material is null.
-     * */
-    public static boolean isSameMaterial(final Material material1, final Material material2) {
-        return material1 != null && material1.equals(material2);
+    public static boolean isSameMaterial(final ItemStack lhs, final ItemStack rhs) {
+        if (lhs == null || rhs == null) {
+            return false;
+        }
+        if (lhs == rhs) {
+            return true;
+        }
+        return isSameMaterial(lhs.getType(), lhs.getDurability(), rhs.getType(), rhs.getDurability());
     }
 
     /**
@@ -49,16 +83,6 @@ public class MaterialAPI {
      * */
     public static Material getMaterial(String slug) {
         Material material = Material.getMaterial(slug);
-        return material == null ? Material.AIR : material;
-    }
-
-    /**
-     * Returns a Material from an id.
-     * Returns Air if the material cannot be found.
-     * */
-    @SuppressWarnings("deprecation")
-    public static Material getMaterial(int id) {
-        Material material = Material.getMaterial(id);
         return material == null ? Material.AIR : material;
     }
 
@@ -84,6 +108,10 @@ public class MaterialAPI {
             if (name != null) {
                 return name;
             }
+        }
+        String potionName = PotionAPI.getPotionName(item);
+        if (potionName != null) {
+            return potionName;
         }
         return getMaterialName(item.getType(), item.getDurability());
     }

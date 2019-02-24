@@ -41,7 +41,7 @@ public class PotionAPI {
      * Gets the meta of an item.
      * Returns null if the item is not a valid potion.
      * */
-    public static PotionMeta getPotionMeta(ItemStack item) {
+    public static PotionMeta getPotionMeta(final ItemStack item) {
         if (isValidPotion(item)) {
             return getPotionMeta(item.getItemMeta());
         }
@@ -52,7 +52,7 @@ public class PotionAPI {
      * Casts an item meta to a potion meta, if possible
      * Returns null if the meta is not an instance of potion meta.
      * */
-    public static PotionMeta getPotionMeta(ItemMeta meta) {
+    public static PotionMeta getPotionMeta(final ItemMeta meta) {
         if (meta instanceof PotionMeta) {
             return (PotionMeta) meta;
         }
@@ -64,7 +64,7 @@ public class PotionAPI {
      * Returns null if the slug is null or empty.
      * Returns null if no match is found.
      * */
-    public static PotionType getPotionType(String slug) {
+    public static PotionType getPotionType(final String slug) {
         if (slug == null || slug.isEmpty()) {
             return null;
         }
@@ -78,7 +78,24 @@ public class PotionAPI {
 
     /**
      * Gets the name of a vanilla potion.
-     * Returns null if data is null..
+     * Returns null is the item is null.
+     * Returns null is the item is not a valid potion.
+     * Returns null if the potion has no base data.
+     * Returns null if no match has been found.
+     * */
+    public static String getPotionName(final ItemStack item) {
+        if (isValidPotion(item)) {
+            PotionMeta meta = getPotionMeta(item);
+            if (meta != null) {
+                return getPotionName(meta.getBasePotionData());
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the name of a vanilla potion.
+     * Returns null if data is null.
      * Returns null if no match is found
      * */
     public static String getPotionName(final PotionData data) {
@@ -91,7 +108,6 @@ public class PotionAPI {
      * */
     public static String getPotionName(final PotionType type, final boolean upgraded) {
         switch (type) {
-            default:
             case UNCRAFTABLE:
                 return "Uncraftable Potion";
             case WATER:
@@ -130,6 +146,8 @@ public class PotionAPI {
                 return "Potion of Weakness";
             case LUCK:
                 return "Potion of Luck";
+            default:
+                return null;
         }
     }
 

@@ -1,20 +1,24 @@
 package com.github.minemanmods.MinemanUtilities;
 
-import com.github.minemanmods.MinemanUtilities.colour.Colour;
-import org.bukkit.ChatColor;
+import org.bukkit.Color;
 
 public class ColourAPI {
 
-    public static String removeAllFormatting(String string) {
-        if (Validate.isValid(string)) {
-            string = ChatColor.stripColor(string);
-            for (Colour colour : Colour.values()) {
-                string = string.replaceAll(colour.getCommandColour(), "");
-            }
-            return string;
+    public static int colourToRGB(Color colour) {
+        return colour == null ? -1 : colour.asRGB();
+    }
+
+    public static Color rbgToColour(int rgb) {
+        if (rgb < 0) {
+            return null;
         }
         else {
-            return null;
+            try {
+                return Color.fromRGB(rgb);
+            }
+            catch (IllegalArgumentException exception) {
+                return null;
+            }
         }
     }
 

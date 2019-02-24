@@ -5,6 +5,7 @@ import com.github.minemanmods.MinemanUtilities.exceptions.NotEnoughSpaceExceptio
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -12,30 +13,55 @@ public class InventoryAPI {
 
     /**
      * Checks whether an inventory is valid.
-     * Returns false if the inventory is null.
-     * Returns false if the inventory has no slots.
+     * For the check to return true it must:-
+     * 1) Exist; it cannot be null.
+     * 2) Have slots.
      * */
     public static boolean isValidInventory(final Inventory inventory) {
-        return inventory != null && inventory.getSize() > 0;
+        if (inventory == null) {
+            return false;
+        }
+        if (inventory.getSize() < 1) {
+            return false;
+        }
+        return true;
     }
 
     /**
+     * Checks whether an inventory is valid.
+     * For this check to return true it must:-
+     * 1) Exist; it cannot be null.
+     * 2) Have elements. (Null elements are counted.)
+     * */
+    public static boolean isValidInventory(final ItemStack[] inventory) {
+        if (inventory == null) {
+            return false;
+        }
+        if (inventory.length < 1) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Duplicates an inventory contents. See Inventory::getContents
+     * Items
+     *
+     *
      * Duplicates an inventory in array form via Inventory.getContents()
      * Items that do not fulfill the requirements of isValidItem() are replaced with null.
      * */
-    public static ItemStack[] duplicateInventory(final ItemStack[] original) {
-        if (original == null) {
-            return new ItemStack[0];
-        }
-        else {
-            ItemStack[] duplicate = new ItemStack[original.length];
-            for (int i = 0; i < original.length; i++) {
-                if (ItemAPI.isValidItem(original[i])) {
-                    duplicate[i] = original[i].clone();
+    public static ItemStack[] duplicateInventory(final ItemStack[] inventory) {
+        if (isValidInventory(inventory)) {
+            ItemStack[] duplicate = new ItemStack[inventory.length];
+            for (int i = 0; i < inventory.length; i++) {
+                if (ItemAPI.isValidItem(inventory[i])) {
+                    duplicate[i] = inventory[i].clone();
                 }
             }
             return duplicate;
         }
+        return new ItemStack[0];
     }
 
     /**
@@ -44,12 +70,12 @@ public class InventoryAPI {
      * Throws if either inventory has no space for the other inventory's items.
      * Items that do not fulfill the requirements of isValidItem() are replaced with null.
      * */
-    public static void swapInventoryContents(final Inventory inventory1, final Inventory inventory2) throws NullPointerException, NotEnoughSpaceException {
+    public static void swapInventoryContents(final Inventory inventory1, final Inventory inventory2) throws InvalidParameterException, NotEnoughSpaceException {
         if (inventory1 == null) {
-            throw new NullPointerException("Cannot swap contents, inventory1 is null.");
+            throw new InvalidParameterException("Cannot swap contents, inventory1 is null.");
         }
         if (inventory2 == null) {
-            throw new NullPointerException("Cannot swap contents, inventory2 is null.");
+            throw new InvalidParameterException("Cannot swap contents, inventory2 is null.");
         }
         ItemStack[] contents1 = Arrays.stream(inventory1.getContents()).filter(ItemAPI::isValidItem).toArray(ItemStack[]::new);
         ItemStack[] contents2 = Arrays.stream(inventory2.getContents()).filter(ItemAPI::isValidItem).toArray(ItemStack[]::new);
@@ -96,17 +122,19 @@ public class InventoryAPI {
      * Safely removes an item stack from an inventory.
      * It is recommended that this function be called from a synchronous scheduler.
      * The inventory will be restored to its previous state if an error occurs.
+     * @throws NullPointerException If
+     *
      * Throws if the inventory is not valid.
      * Throws if the item is not valid.
      * Throws if the inventory does not have the required amount of the item.
      * Throws if was unable to remove the required amount of the item.
      * */
-    public static void removeItemFromInventory(final Inventory inventory, final ItemStack item) throws NullPointerException, FailedTransactionException {
+    public static void removeItemFromInventory(final Inventory inventory, final ItemStack item) throws InvalidParameterException, FailedTransactionException {
         if (!isValidInventory(inventory)) {
-            throw new NullPointerException("Cannot remove item from an invalid inventory.");
+            throw new InvalidParameterException("Cannot remove item from an invalid inventory.");
         }
         if (!ItemAPI.isValidItem(item)) {
-            throw new NullPointerException("Cannot remove an invalid item from an inventory.");
+            throw new InvalidParameterException("Cannot remove an invalid item from an inventory.");
         }
         if (!hasRequiredItem(inventory, item, item.getAmount())) {
             throw new FailedTransactionException("That inventory does not have the amount of times to remove.");
@@ -159,12 +187,12 @@ public class InventoryAPI {
      * Throws if the item is not valid.
      * Throws if there isn't enough room to add the item in its entirety.
      * */
-    public static void addItemToInventory(final Inventory inventory, final ItemStack item) throws FailedTransactionException {
+    public static void addItemToInventory(final Inventory inventory, final ItemStack item) throws InvalidParameterException, FailedTransactionException {
         if (!isValidInventory(inventory)) {
-            throw new NullPointerException("Cannot add item from an invalid inventory.");
+            throw new InvalidParameterException("Cannot add item from an invalid inventory.");
         }
         if (!ItemAPI.isValidItem(item)) {
-            throw new NullPointerException("Cannot add an invalid item from an inventory.");
+            throw new InvalidParameterException("Cannot add an invalid item from an inventory.");
         }
         ItemStack[] savedInventory = duplicateInventory(inventory.getContents());
         Map<Integer, ItemStack> remaining = inventory.addItem(item);
@@ -185,24 +213,24 @@ public class InventoryAPI {
      * Throws if either item arrays are null.
      * Throws if either item arrays contain invalid items.
      * */
-    public static void inventoryTransaction(final Inventory inventory1, final ItemStack[] items1, final Inventory inventory2, final ItemStack[] items2) throws NullPointerException, FailedTransactionException {
+    public static void inventoryTransaction(final Inventory inventory1, final ItemStack[] items1, final Inventory inventory2, final ItemStack[] items2) throws InvalidParameterException, FailedTransactionException {
         if (!isValidInventory(inventory1)) {
-            throw new NullPointerException("Cannot perform transaction, inventory1 is invalid.");
+            throw new InvalidParameterException("Cannot perform transaction, inventory1 is invalid.");
         }
         if (items1 == null) {
-            throw new NullPointerException("Cannot perform transaction, items1 is null.");
+            throw new InvalidParameterException("Cannot perform transaction, items1 is null.");
         }
         if (!isValidInventory(inventory2)) {
-            throw new NullPointerException("Cannot perform transaction, inventory2 is invalid.");
+            throw new InvalidParameterException("Cannot perform transaction, inventory2 is invalid.");
         }
         if (items2 == null) {
-            throw new NullPointerException("Cannot perform transaction, items2 is null.");
+            throw new InvalidParameterException("Cannot perform transaction, items2 is null.");
         }
         if (!ItemAPI.isValidItemSet(items1)) {
-            throw new NullPointerException("Cannot perform transaction, items1 contains an invalid item!");
+            throw new InvalidParameterException("Cannot perform transaction, items1 contains an invalid item!");
         }
         if (!ItemAPI.isValidItemSet(items2)) {
-            throw new NullPointerException("Cannot perform transaction, items2 contains an invalid item!");
+            throw new InvalidParameterException("Cannot perform transaction, items2 contains an invalid item!");
         }
         ItemStack[] savedInventory1 = duplicateInventory(inventory1.getContents());
         ItemStack[] savedInventory2 = duplicateInventory(inventory2.getContents());
